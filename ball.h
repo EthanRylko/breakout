@@ -54,16 +54,21 @@ private:
   /**
    * Check for collision with block in grid
    * @param block block from grid
-   * @return true if collision
+   * @return type of collision
    */
-  bool BlockCollision(const Block &block) const {
+  collision_type BlockCollision(const Block &block) const {
     float dx = abs(block.GetPosition().x - m_position.x);
     float dy = abs(block.GetPosition().y - m_position.y);
-    if (dx > BLOCK_HALF_SIZE + BALL_RADIUS) return false;
-    if (dy > BLOCK_HALF_SIZE + BALL_RADIUS) return false;
-    if (dx <= BLOCK_HALF_SIZE) return true;
-    if (dy <= BLOCK_HALF_SIZE) return true;
-    return false;
+
+    if (dx > BLOCK_HALF_SIZE + BALL_RADIUS) return collision_type::NONE;
+    if (dy > BLOCK_HALF_SIZE + BALL_RADIUS) return collision_type::NONE;
+    if (dx <= BLOCK_HALF_SIZE) return collision_type::HORIZONTAL;
+    if (dy <= BLOCK_HALF_SIZE) return collision_type::VERTICAL;
+
+    double corner_dist = pow(dx - BLOCK_HALF_SIZE, 2) + pow(dy - BLOCK_HALF_SIZE, 2);
+    if (corner_dist <= pow(BALL_RADIUS, 2)) return collision_type::CORNER;
+
+    return collision_type::NONE;
   }
 
 public:
@@ -120,7 +125,8 @@ public:
     // has the ball collided with a block?
     std::set<uint32_t> to_delete;
     for (const auto &block : grid) {
-      if (BlockCollision(*block.second)) {
+      collision_type collision = BlockCollision(*block.second);
+      if (collision != collision_type::NONE) {
         to_delete.insert(block.first);
         // TODO: Calculate new angle, velocity
       }

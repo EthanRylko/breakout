@@ -11,7 +11,7 @@ add_executable(breakout
     constants.h
     ball.h
     player.h
-        block.h
+    block.h
 )
 target_link_libraries(breakout
     PRIVATE
