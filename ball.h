@@ -57,18 +57,61 @@ private:
    * @return type of collision
    */
   collision_type BlockCollision(const Block &block) const {
-    float dx = abs(block.GetPosition().x - m_position.x);
-    float dy = abs(block.GetPosition().y - m_position.y);
+    sf::Vector2f block_pos = block.GetPosition();
+    float dx = abs(block_pos.x - m_position.x);
+    float dy = abs(block_pos.y - m_position.y);
 
-    if (dx > BLOCK_HALF_SIZE + BALL_RADIUS) return collision_type::NONE;
-    if (dy > BLOCK_HALF_SIZE + BALL_RADIUS) return collision_type::NONE;
-    if (dx <= BLOCK_HALF_SIZE) return collision_type::HORIZONTAL;
-    if (dy <= BLOCK_HALF_SIZE) return collision_type::VERTICAL;
+    if (dx > BLOCK_HALF_SIZE_TOTAL + BALL_RADIUS) return collision_type::NONE;
+    if (dy > BLOCK_HALF_SIZE_TOTAL + BALL_RADIUS) return collision_type::NONE;
 
-    double corner_dist = pow(dx - BLOCK_HALF_SIZE, 2) + pow(dy - BLOCK_HALF_SIZE, 2);
+    if (m_position.x <= block_pos.x + BLOCK_HALF_SIZE_TOTAL &&
+        m_position.x >= block_pos.x - BLOCK_HALF_SIZE_TOTAL) {
+      return collision_type::VERTICAL;
+    }
+
+    if (m_position.y <= block_pos.y + BLOCK_HALF_SIZE_TOTAL &&
+        m_position.y >= block_pos.y - BLOCK_HALF_SIZE_TOTAL) {
+      return collision_type::HORIZONTAL;
+    }
+
+    double corner_dist = pow(dx - BLOCK_HALF_SIZE_TOTAL, 2) + pow(dy - BLOCK_HALF_SIZE_TOTAL, 2);
     if (corner_dist <= pow(BALL_RADIUS, 2)) return collision_type::CORNER;
 
     return collision_type::NONE;
+  }
+
+  /**
+   * Calculate new angle and velocity after corner collision
+   * @param block block from grid
+   */
+  void CalculateCornerCollision(const Block &block) {
+    sf::Vector2f block_pos = block.GetPosition();
+    sf::Vector2f block_to_ball = {m_position.x - block_pos.x, m_position.y - block_pos.y};
+
+    std::cout << "m_angle before: " << m_angle;
+
+
+    // TODO: Replace with acute angle between two lines formula (arctan)
+    double dot = block_to_ball.x * m_velocity.x + block_to_ball.y * m_velocity.y;
+    double arc_cos = dot / (block_to_ball.length() * m_velocity.length());
+    arc_cos = std::max(-1.0, std::min(1.0, arc_cos));
+
+    double angle = acos(arc_cos);
+    angle = (angle > M_PI / 2.0 ? M_PI - angle : angle);
+    std::cout << " found angle: " << angle;
+    std::cout << " block to ball: " << block_to_ball.angle().asRadians();
+
+    // TODO: Figure out retroreflection problem
+    if (m_angle > block_to_ball.angle().asRadians()) {
+      m_angle = block_to_ball.angle().asRadians() - angle;
+      std::cout << " negative ting ";
+    } else {
+      m_angle = block_to_ball.angle().asRadians() - angle;
+      std::cout << " positive ting ";
+    }
+    std::cout << " m_angle after: " << m_angle << std::endl;
+
+    ResetVelocity();
   }
 
 public:
@@ -128,7 +171,25 @@ public:
       collision_type collision = BlockCollision(*block.second);
       if (collision != collision_type::NONE) {
         to_delete.insert(block.first);
-        // TODO: Calculate new angle, velocity
+        switch(collision) {
+          case collision_type::VERTICAL:
+            m_velocity.y *= -1;
+            ResetAngle();
+            break;
+          case collision_type::HORIZONTAL:
+            m_velocity.x *= -1;
+            ResetAngle();
+            break;
+          case collision_type::CORNER:
+            //CalculateCornerCollision(*block.second);
+            CalculateCornerCollision(*block.second);
+            std::cout << "TING" << std::endl;
+            break;
+          default:
+            // should be impossible, but IDE throws warning
+            break;
+        }
+        break;
       }
     }
 

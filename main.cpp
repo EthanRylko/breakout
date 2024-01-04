@@ -11,7 +11,7 @@
 
 int main() {
   sf::RenderWindow window(sf::VideoMode({WINDOW_WIDTH, WINDOW_HEIGHT}), "Breakout");
-  window.setFramerateLimit(60);
+  window.setFramerateLimit(FRAME_RATE);
 
   Player player;
 
