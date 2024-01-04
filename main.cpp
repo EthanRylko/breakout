@@ -45,9 +45,9 @@ int main() {
 
   // init grid of blocks
   std::map<uint32_t, std::shared_ptr<Block>> grid;
-  for (int i = 0; i < GRID_WIDTH; i++) {
-    for (int j = 0; j < GRID_HEIGHT; j++) {
-      std::shared_ptr<Block> block = std::make_shared<Block>(i, j);
+  for (int i = 0; i < GRID_HEIGHT; i++) {
+    for (int j = 0; j < GRID_WIDTH; j++) {
+      std::shared_ptr<Block> block = std::make_shared<Block>(j, i, 7);
       grid[i * GRID_WIDTH + j] = block;
     }
   }

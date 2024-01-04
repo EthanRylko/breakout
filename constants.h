@@ -13,14 +13,14 @@ const int PLAYER_Y = WINDOW_HEIGHT - 50;
 const int BALL_RADIUS = 5;
 const int BALL_SPEED = 5;
 
-const int BLOCK_SIZE_TOTAL = 20;
+const int BLOCK_SIZE_TOTAL = 10;
 const int BLOCK_HALF_SIZE_TOTAL = BLOCK_SIZE_TOTAL / 2;
 const int BLOCK_SPACING = 1;
 const int BLOCK_SIZE = BLOCK_SIZE_TOTAL - 2 * BLOCK_SPACING;
 const int BLOCK_HALF_SIZE = BLOCK_SIZE / 2;
 
 const int GRID_WIDTH = WINDOW_WIDTH / BLOCK_SIZE_TOTAL;
-const int GRID_HEIGHT = 16;
+const int GRID_HEIGHT = 32;
 
 const sf::Color BACKGROUND_COLOR = sf::Color::Black;
 const sf::Color PLAYER_COLOR = sf::Color::White;

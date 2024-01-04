@@ -13,7 +13,19 @@ add_executable(breakout
     player.h
     block.h
 )
+add_executable(levelcreator
+    lvl/levelcreator.cpp
+    constants.h
+    lvl/cursor.h
+)
+
 target_link_libraries(breakout
+    PRIVATE
+    sfml-window
+    sfml-graphics
+    sfml-system
+)
+target_link_libraries(levelcreator
     PRIVATE
     sfml-window
     sfml-graphics
