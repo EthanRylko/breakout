@@ -157,16 +157,16 @@ public:
 
     // TODO: Come up with better collision detection
     if (m_position.y >= player_pos.y - BALL_RADIUS &&
-        m_velocity.y > 0 &&
         m_position.y <= player_pos.y + BALL_RADIUS) {
       if (m_position.x > player_pos.x - PLAYER_HALF_WIDTH &&
           m_position.x < player_pos.x + PLAYER_HALF_WIDTH) {
         // linear mapping of ball relative to player to [-pi, 0]
+        // then fix range to [-9/10 pi, -1/10 pi]
         m_angle = M_PI / PLAYER_WIDTH * (m_position.x - player_pos.x) - M_PI / 2.0f;
+        m_angle = std::max(-9 * M_PI / 10.0, std::min(-M_PI / 10.0, m_angle));
         ResetVelocity();
       }
     }
-
   }
 
   /**
