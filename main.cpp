@@ -9,6 +9,20 @@
 #include "constants.h"
 #include "player.h"
 
+void MultiplyBalls(std::map<uint32_t, std::shared_ptr<Ball>> &balls, uint32_t &ball_id) {
+  std::map<uint32_t, std::shared_ptr<Ball>> temp;
+  for (auto ball : balls) {
+    double angle = ball.second->GetAngle() + M_PI / 2.0;
+    temp[ball_id++] = std::make_shared<Ball>(ball.second->GetPosition(), angle);
+    temp[ball_id++] = std::make_shared<Ball>(ball.second->GetPosition(), angle + M_PI / 2.0);
+    temp[ball_id++] = std::make_shared<Ball>(ball.second->GetPosition(), angle + M_PI);
+  }
+
+  for (auto ball : temp) {
+    balls[ball.first] = ball.second;
+  }
+}
+
 int main() {
   sf::RenderWindow window(sf::VideoMode({WINDOW_WIDTH, WINDOW_HEIGHT}), "Breakout");
   window.setFramerateLimit(FRAME_RATE);
@@ -30,12 +44,25 @@ int main() {
     }
   }
 
+  bool click_lock = false;
+
   // Game loop
   while (window.isOpen()) {
     sf::Event event;
     while (window.pollEvent(event)) {
       if (event.type == sf::Event::Closed) {
         window.close();
+      }
+      if (event.type == sf::Event::MouseButtonPressed) {
+        if (event.mouseButton.button == sf::Mouse::Button::Left && !click_lock) {
+          click_lock = true;
+          MultiplyBalls(balls, ball_id);
+        }
+      }
+      if (event.type == sf::Event::MouseButtonReleased) {
+        if (event.mouseButton.button == sf::Mouse::Button::Left) {
+          click_lock = false;
+        }
       }
     }
 

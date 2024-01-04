@@ -129,6 +129,16 @@ public:
     ResetVelocity();
   }
 
+  Ball(sf::Vector2f pos, double angle) {
+    m_position = pos;
+    m_shape.setRadius(BALL_RADIUS);
+    m_shape.setOrigin({BALL_RADIUS, BALL_RADIUS});
+    m_shape.setFillColor(BALL_COLOR);
+    m_shape.setPosition(m_position);
+    m_angle = angle;
+    ResetVelocity();
+  }
+
   /**
    * Move ball based on velocity
    */
@@ -213,5 +223,21 @@ public:
    */
   bool OutOfBounds() const {
     return (m_position.y >= WINDOW_HEIGHT);
+  }
+
+  /**
+   * Get position of ball
+   * @return position
+   */
+  sf::Vector2f GetPosition() const {
+    return m_position;
+  }
+
+  /**
+   * Get angle that ball is travelling
+   * @return angle
+   */
+  double GetAngle() {
+    return m_angle;
   }
 };
