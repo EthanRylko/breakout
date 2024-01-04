@@ -2,11 +2,13 @@
 
 const int WINDOW_WIDTH = 800;
 const int WINDOW_HEIGHT = 600;
+const int WINDOW_HALF_WIDTH = WINDOW_WIDTH / 2;
 const int FRAME_RATE = 60;
 
 const int PLAYER_WIDTH = 100;
-const int PLAYER_HEIGHT = 20;
+const int PLAYER_HEIGHT = 10;
 const int PLAYER_HALF_WIDTH = PLAYER_WIDTH / 2;
+const int PLAYER_Y = WINDOW_HEIGHT - 50;
 
 const int BALL_RADIUS = 5;
 const int BALL_SPEED = 5;

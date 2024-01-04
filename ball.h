@@ -86,41 +86,39 @@ private:
    */
   void CalculateCornerCollision(const Block &block) {
     sf::Vector2f block_pos = block.GetPosition();
-    sf::Vector2f block_to_ball = {m_position.x - block_pos.x, m_position.y - block_pos.y};
+    sf::Vector2f block_to_ball = (m_position - block_pos).normalized();
+    float dot = block_to_ball.dot(m_velocity);
 
-    std::cout << "m_angle before: " << m_angle;
+    // reflect through normal vector (block center to ball center)
+    m_velocity -= 2.0f * dot * block_to_ball;
+    ResetAngle();
+  }
 
-
-    // TODO: Replace with acute angle between two lines formula (arctan)
-    double dot = block_to_ball.x * m_velocity.x + block_to_ball.y * m_velocity.y;
-    double arc_cos = dot / (block_to_ball.length() * m_velocity.length());
-    arc_cos = std::max(-1.0, std::min(1.0, arc_cos));
-
-    double angle = acos(arc_cos);
-    angle = (angle > M_PI / 2.0 ? M_PI - angle : angle);
-    std::cout << " found angle: " << angle;
-    std::cout << " block to ball: " << block_to_ball.angle().asRadians();
-
-    // TODO: Figure out retroreflection problem
-    if (m_angle > block_to_ball.angle().asRadians()) {
-      m_angle = block_to_ball.angle().asRadians() - angle;
-      std::cout << " negative ting ";
-    } else {
-      m_angle = block_to_ball.angle().asRadians() - angle;
-      std::cout << " positive ting ";
+  void HandleCollision(const collision_type & collision, const Block &block) {
+    switch(collision) {
+      case collision_type::VERTICAL:
+        m_velocity.y *= -1;
+        ResetAngle();
+        break;
+      case collision_type::HORIZONTAL:
+        m_velocity.x *= -1;
+        ResetAngle();
+        break;
+      case collision_type::CORNER:
+        CalculateCornerCollision(block);
+        break;
+      default:
+        // should be impossible, but IDE throws warning
+        break;
     }
-    std::cout << " m_angle after: " << m_angle << std::endl;
-
-    ResetVelocity();
   }
 
 public:
-
   /**
    * Default constructor
    */
   Ball() {
-    m_position = {400, 490};
+    m_position = {400, PLAYER_Y - BALL_RADIUS};
     m_shape.setRadius(BALL_RADIUS);
     m_shape.setOrigin({BALL_RADIUS, BALL_RADIUS});
     m_shape.setFillColor(BALL_COLOR);
@@ -159,7 +157,8 @@ public:
 
     // TODO: Come up with better collision detection
     if (m_position.y >= player_pos.y - BALL_RADIUS &&
-        m_velocity.y > 0) {
+        m_velocity.y > 0 &&
+        m_position.y <= player_pos.y + BALL_RADIUS) {
       if (m_position.x > player_pos.x - PLAYER_HALF_WIDTH &&
           m_position.x < player_pos.x + PLAYER_HALF_WIDTH) {
         // linear mapping of ball relative to player to [-pi, 0]
@@ -176,36 +175,13 @@ public:
    */
   void GridCollision(std::map<uint32_t, std::shared_ptr<Block>> &grid) {
     // has the ball collided with a block?
-    std::set<uint32_t> to_delete;
     for (const auto &block : grid) {
       collision_type collision = BlockCollision(*block.second);
       if (collision != collision_type::NONE) {
-        to_delete.insert(block.first);
-        switch(collision) {
-          case collision_type::VERTICAL:
-            m_velocity.y *= -1;
-            ResetAngle();
-            break;
-          case collision_type::HORIZONTAL:
-            m_velocity.x *= -1;
-            ResetAngle();
-            break;
-          case collision_type::CORNER:
-            //CalculateCornerCollision(*block.second);
-            CalculateCornerCollision(*block.second);
-            std::cout << "TING" << std::endl;
-            break;
-          default:
-            // should be impossible, but IDE throws warning
-            break;
-        }
+        HandleCollision(collision, *block.second);
+        grid.erase(block.first);
         break;
       }
-    }
-
-    // if ball collided, then delete block
-    for (uint32_t id : to_delete) {
-      grid.erase(id);
     }
   }
 
@@ -237,7 +213,7 @@ public:
    * Get angle that ball is travelling
    * @return angle
    */
-  double GetAngle() {
+  double GetAngle() const {
     return m_angle;
   }
 };

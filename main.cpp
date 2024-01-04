@@ -9,20 +9,28 @@
 #include "constants.h"
 #include "player.h"
 
+/**
+ * Multiply balls power up
+ * @param balls set of currently active balls
+ * @param ball_id current ball ID
+ */
 void MultiplyBalls(std::map<uint32_t, std::shared_ptr<Ball>> &balls, uint32_t &ball_id) {
   std::map<uint32_t, std::shared_ptr<Ball>> temp;
-  for (auto ball : balls) {
-    double angle = ball.second->GetAngle() + M_PI / 2.0;
-    temp[ball_id++] = std::make_shared<Ball>(ball.second->GetPosition(), angle);
-    temp[ball_id++] = std::make_shared<Ball>(ball.second->GetPosition(), angle + M_PI / 2.0);
-    temp[ball_id++] = std::make_shared<Ball>(ball.second->GetPosition(), angle + M_PI);
+  for (const auto &ball : balls) {
+    double angle = ball.second->GetAngle();
+    temp[ball_id++] = std::make_shared<Ball>(ball.second->GetPosition(), angle + 2.0f * M_PI / 3.0);
+    temp[ball_id++] = std::make_shared<Ball>(ball.second->GetPosition(), angle - 2.0f * M_PI / 3.0);
   }
 
-  for (auto ball : temp) {
+  for (const auto &ball : temp) {
     balls[ball.first] = ball.second;
   }
 }
 
+/**
+ * Main function
+ * @return success
+ */
 int main() {
   sf::RenderWindow window(sf::VideoMode({WINDOW_WIDTH, WINDOW_HEIGHT}), "Breakout");
   window.setFramerateLimit(FRAME_RATE);

@@ -16,7 +16,7 @@ public:
    * Default constructor
    */
   Player() {
-    m_position = {400, 500};
+    m_position = {WINDOW_HALF_WIDTH, PLAYER_Y};
     m_shape.setSize({PLAYER_WIDTH, PLAYER_HEIGHT});
     m_shape.setOrigin({PLAYER_HALF_WIDTH, 0});
     m_shape.setFillColor(PLAYER_COLOR);
