@@ -27,8 +27,8 @@ public:
   }
 
   /**
-   * Get cursor tile ID
-   * @return tile ID
+   * Get cursor block ID
+   * @return block ID
    */
   uint8_t GetID() const {
     return m_id;
@@ -38,10 +38,9 @@ public:
    * Set position of cursor
    * @param position mouse position
    */
-  void SetPosition(sf::Vector2i position) {
-    sf::Vector2f float_pos = {static_cast<float>(position.x), static_cast<float>(position.y)};
-    m_position = float_pos;
-    m_shape.setPosition(float_pos);
+  void SetPosition(sf::Vector2f position) {
+    m_position = position;
+    m_shape.setPosition(position);
   }
 
   /**

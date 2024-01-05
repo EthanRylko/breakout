@@ -46,6 +46,14 @@ public:
   }
 
   /**
+   * Get block ID
+   * @return ID
+   */
+  uint8_t GetID() const {
+    return m_id;
+  }
+
+  /**
    * Get color of block
    * @return color
    */
