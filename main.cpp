@@ -29,12 +29,10 @@ void Load(std::map<uint32_t, std::shared_ptr<Block>> &grid,
 
     if (id_1 != 0) {
       grid[i] = std::make_shared<Block>(i % read_width, i / read_width, id_1);
-      if (id_1 != 8) block_count++;
     }
 
     if (id_2 != 0) {
       grid[i + 1] = std::make_shared<Block>((i + 1) % read_width, (i + 1) / read_width, id_2);
-      if (id_2 != 8) block_count++;
     }
   }
 }
