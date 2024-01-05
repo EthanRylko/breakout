@@ -26,5 +26,4 @@ const sf::Color BACKGROUND_COLOR = sf::Color::Black;
 const sf::Color PLAYER_COLOR = sf::Color::White;
 const sf::Color BALL_COLOR = sf::Color::White;
 
-const uint8_t COLOR_ARRAY[15] = {255, 255, 191, 127, 63, 0, 0, 0, 0, 0, 0, 63, 127, 191, 255};
 enum class collision_type {NONE, VERTICAL, HORIZONTAL, CORNER};

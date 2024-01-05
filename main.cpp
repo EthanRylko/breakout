@@ -8,34 +8,8 @@
 #include "ball.h"
 #include "block.h"
 #include "constants.h"
+#include "grid.h"
 #include "player.h"
-
-/**
- * Load grid from file
- * @param grid grid reference
- * @param filename name of file
- */
-void Load(std::map<uint32_t, std::shared_ptr<Block>> &grid,
-          const std::string &filename)
-{
-  std::ifstream file(filename);
-  uint8_t read_width, read_height;
-  file >> read_width >> read_height;
-  for (uint32_t i = 0; i < read_width * read_height; i += 2) {
-    uint8_t data_pair, id_1, id_2;
-    file >> data_pair;
-    id_1 = (data_pair >> 4);
-    id_2 = (data_pair & 0b00001111);
-
-    if (id_1 != 0) {
-      grid[i] = std::make_shared<Block>(i % read_width, i / read_width, id_1);
-    }
-
-    if (id_2 != 0) {
-      grid[i + 1] = std::make_shared<Block>((i + 1) % read_width, (i + 1) / read_width, id_2);
-    }
-  }
-}
 
 /**
  * Multiply balls power up
@@ -72,8 +46,9 @@ int main() {
   std::set<uint32_t> to_delete;
 
   // init grid of blocks
-  std::map<uint32_t, std::shared_ptr<Block>> grid;
-  Load(grid, "lvl/001.bin");
+  Grid grid("lvl/001.bin");
+//  std::map<uint32_t, std::shared_ptr<Block>> grid;
+//  Load(grid, "lvl/001.bin");
 
   bool click_lock = false;
 
@@ -124,9 +99,7 @@ int main() {
     for (const auto &ball : balls) {
       ball.second->Draw(window);
     }
-    for (const auto &block : grid) {
-      block.second->Draw(window);
-    }
+    grid.Draw(window);
     window.display();
 
     // lose condition
@@ -135,11 +108,11 @@ int main() {
       window.close();
     }
 
-    // win condition
-    if (grid.empty()) {
-      std::cout << "You win!" << std::endl;
-      window.close();
-    }
+//    // win condition
+//    if (grid.empty()) {
+//      std::cout << "You win!" << std::endl;
+//      window.close();
+//    }
   }
 
   return 0;

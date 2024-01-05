@@ -4,6 +4,7 @@
 #include "block.h"
 #include "constants.h"
 #include "player.h"
+#include "grid.h"
 
 #include <cmath>
 #include <set>
@@ -183,13 +184,14 @@ public:
    * Collision check with all blocks in grid
    * @param grid grid of blocks
    */
-  void GridCollision(std::map<uint32_t, std::shared_ptr<Block>> &grid) {
+  void GridCollision(Grid &grid) {
     // has the ball collided with a block?
-    for (const auto &block : grid) {
+    block_map subset = grid.GetSubset(m_position);
+    for (const auto &block : subset) {
       collision_type collision = BlockCollision(*block.second);
       if (collision != collision_type::NONE) {
         HandleCollision(collision, *block.second);
-        grid.erase(block.first);
+        if (block.second->GetBreakable()) grid.Remove(block.first);
         break;
       }
     }

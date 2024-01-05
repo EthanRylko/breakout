@@ -12,6 +12,7 @@ add_executable(breakout
     ball.h
     player.h
     block.h
+    grid.h
 )
 add_executable(levelcreator
     lvl/levelcreator.cpp
