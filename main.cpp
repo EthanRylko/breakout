@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <memory>
 #include <map>
 #include <set>
@@ -8,6 +9,35 @@
 #include "block.h"
 #include "constants.h"
 #include "player.h"
+
+/**
+ * Load grid from file
+ * @param grid grid reference
+ * @param filename name of file
+ */
+void Load(std::map<uint32_t, std::shared_ptr<Block>> &grid,
+          const std::string &filename)
+{
+  std::ifstream file(filename);
+  uint8_t read_width, read_height;
+  file >> read_width >> read_height;
+  for (uint32_t i = 0; i < read_width * read_height; i += 2) {
+    uint8_t data_pair, id_1, id_2;
+    file >> data_pair;
+    id_1 = (data_pair >> 4);
+    id_2 = (data_pair & 0b00001111);
+
+    if (id_1 != 0) {
+      grid[i] = std::make_shared<Block>(i % read_width, i / read_width, id_1);
+      if (id_1 != 8) block_count++;
+    }
+
+    if (id_2 != 0) {
+      grid[i + 1] = std::make_shared<Block>((i + 1) % read_width, (i + 1) / read_width, id_2);
+      if (id_2 != 8) block_count++;
+    }
+  }
+}
 
 /**
  * Multiply balls power up
@@ -45,12 +75,7 @@ int main() {
 
   // init grid of blocks
   std::map<uint32_t, std::shared_ptr<Block>> grid;
-  for (int i = 0; i < GRID_HEIGHT; i++) {
-    for (int j = 0; j < GRID_WIDTH; j++) {
-      std::shared_ptr<Block> block = std::make_shared<Block>(j, i, 7);
-      grid[i * GRID_WIDTH + j] = block;
-    }
-  }
+  Load(grid, "lvl/001.bin");
 
   bool click_lock = false;
 
@@ -83,6 +108,7 @@ int main() {
       ball.second->Move();
       ball.second->PlayerCollision(player);
       ball.second->GridCollision(grid);
+
       if (ball.second->OutOfBounds()) {
         to_delete.insert(ball.first);
       }

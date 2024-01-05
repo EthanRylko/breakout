@@ -70,4 +70,12 @@ public:
     }
     return color;
   }
+
+  /**
+   * Return true if block can be broken
+   * @return if block is breakable
+   */
+  bool GetBreakable() const {
+    return m_id != 8;
+  }
 };
