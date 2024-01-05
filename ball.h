@@ -94,6 +94,11 @@ private:
     ResetAngle();
   }
 
+  /**
+   * Set new velocity/angle based on collision with block
+   * @param collision type of collision
+   * @param block block in collision
+   */
   void HandleCollision(const collision_type & collision, const Block &block) {
     switch(collision) {
       case collision_type::VERTICAL:
@@ -127,6 +132,11 @@ public:
     ResetVelocity();
   }
 
+  /**
+   * Duplication constructor
+   * @param pos position
+   * @param angle angle of movement
+   */
   Ball(sf::Vector2f pos, double angle) {
     m_position = pos;
     m_shape.setRadius(BALL_RADIUS);

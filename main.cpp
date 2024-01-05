@@ -75,8 +75,8 @@ int main() {
     }
 
     // Deal with player
-    sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
-    player.Move(mousePosition);
+    sf::Vector2i mouse_pos = sf::Mouse::getPosition(window);
+    player.Move(window.mapPixelToCoords(mouse_pos));
 
     // Deal with balls
     for (const auto &ball : balls) {

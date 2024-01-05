@@ -27,7 +27,7 @@ public:
    * Move player
    * @param pos mouse position
    */
-  void Move(const sf::Vector2i &pos) {
+  void Move(const sf::Vector2f &pos) {
     m_position.x = pos.x;
     m_shape.setPosition(m_position);
   }
