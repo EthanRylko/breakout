@@ -83,10 +83,10 @@ public:
       int x = static_cast<int>(pos.x / BLOCK_SIZE_TOTAL);
       int y = static_cast<int>(pos.y / BLOCK_SIZE_TOTAL);
 
-      for (int dy = -1; dy < 1; dy++) {
+      for (int dy = -1; dy < 2; dy++) {
         if (y + dy < 0 || y + dy >= m_height) continue;
 
-        for (int dx = -1; dx < 1; dx++) {
+        for (int dx = -1; dx < 2; dx++) {
           if (x + dx < 0 || x + dx >= m_width) continue;
           uint32_t id = (x + dx) + (y + dy) * m_width;
           if (m_blocks.contains(id)) {

@@ -185,15 +185,29 @@ public:
    * @param grid grid of blocks
    */
   void GridCollision(Grid &grid) {
-    // has the ball collided with a block?
+    // narrow search
     block_map subset = grid.GetSubset(m_position);
+    if (subset.empty()) return;
+
+    // find nearest block
+    Block *nearest;
+    float min_dist = -1;
+    uint32_t nearest_id = 0;
+
     for (const auto &block : subset) {
-      collision_type collision = BlockCollision(*block.second);
-      if (collision != collision_type::NONE) {
-        HandleCollision(collision, *block.second);
-        if (block.second->GetBreakable()) grid.Remove(block.first);
-        break;
+      float dist = (block.second->GetPosition() - m_position).length();
+      if (min_dist == -1 || dist < min_dist) {
+        min_dist = dist;
+        nearest_id = block.first;
+        nearest = block.second.get();
       }
+    }
+
+    // has collision happened?
+    collision_type collision = BlockCollision(*nearest);
+    if (collision != collision_type::NONE) {
+      HandleCollision(collision, *nearest);
+      if (nearest->GetBreakable()) grid.Remove(nearest_id);
     }
   }
 
