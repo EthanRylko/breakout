@@ -47,10 +47,6 @@ int main() {
 
   // init grid of blocks
   Grid grid("lvl/001.bin");
-//  std::map<uint32_t, std::shared_ptr<Block>> grid;
-//  Load(grid, "lvl/001.bin");
-
-  bool click_lock = false;
 
   // Game loop
   while (window.isOpen()) {
@@ -60,14 +56,8 @@ int main() {
         window.close();
       }
       if (event.type == sf::Event::MouseButtonPressed) {
-        if (event.mouseButton.button == sf::Mouse::Button::Left && !click_lock) {
-          click_lock = true;
-          MultiplyBalls(balls, ball_id);
-        }
-      }
-      if (event.type == sf::Event::MouseButtonReleased) {
         if (event.mouseButton.button == sf::Mouse::Button::Left) {
-          click_lock = false;
+          MultiplyBalls(balls, ball_id);
         }
       }
     }
@@ -108,11 +98,11 @@ int main() {
       window.close();
     }
 
-//    // win condition
-//    if (grid.empty()) {
-//      std::cout << "You win!" << std::endl;
-//      window.close();
-//    }
+    // win condition
+    if (grid.Finished()) {
+      std::cout << "You win!" << std::endl;
+      window.close();
+    }
   }
 
   return 0;

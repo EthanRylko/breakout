@@ -15,6 +15,7 @@ private:
   block_map m_blocks;
   int m_width;
   int m_height;
+  uint32_t m_breakable_blocks = 0;
 
   /**
    * Load grid from file
@@ -36,10 +37,12 @@ private:
 
       if (id_1 != 0) {
         m_blocks[i] = std::make_shared<Block>(i % m_width, i / m_width, id_1);
+        if (id_1 != 0 && id_1 != 8) m_breakable_blocks++;
       }
 
       if (id_2 != 0) {
         m_blocks[i + 1] = std::make_shared<Block>((i + 1) % m_width, (i + 1) / m_width, id_2);
+        if (id_2 != 0 && id_2 != 8) m_breakable_blocks++;
       }
     }
   }
@@ -104,5 +107,14 @@ public:
      */
     void Remove(uint32_t id) {
       m_blocks.erase(id);
+      m_breakable_blocks--;
+    }
+
+    /**
+     * Check if all breakable blocks are gone
+     * @return true if game is finished
+     */
+    bool Finished() const {
+      return (m_breakable_blocks == 0);
     }
 };
