@@ -96,17 +96,48 @@ private:
   }
 
   /**
+   * Correct ball position after collision
+   * @param collision type of collision
+   * @param block block in collision
+   */
+  void SnapBall(const collision_type &collision, const Block &block) {
+    sf::Vector2f block_pos = block.GetPosition();
+    if (collision == collision_type::HORIZONTAL) {
+      float edge_x;
+      if (m_position.x < block_pos.x) {
+        edge_x = block_pos.x - BLOCK_HALF_SIZE_TOTAL - BALL_RADIUS;
+      } else {
+        edge_x = block_pos.x + BLOCK_HALF_SIZE_TOTAL + BALL_RADIUS;
+      }
+      float dx = edge_x - m_position.x;
+      m_position.x += 2 * dx;
+    }
+    if (collision == collision_type::VERTICAL) {
+      float edge_y;
+      if (m_position.y < block_pos.y) {
+        edge_y = block_pos.y - BLOCK_HALF_SIZE_TOTAL - BALL_RADIUS;
+      } else {
+        edge_y = block_pos.y + BLOCK_HALF_SIZE_TOTAL + BALL_RADIUS;
+      }
+      float dy = edge_y - m_position.y;
+      m_position.y += 2 * dy;
+    }
+  }
+
+  /**
    * Set new velocity/angle based on collision with block
    * @param collision type of collision
    * @param block block in collision
    */
-  void HandleCollision(const collision_type & collision, const Block &block) {
+  void HandleCollision(const collision_type &collision, const Block &block) {
     switch(collision) {
       case collision_type::VERTICAL:
+        SnapBall(collision, block);
         m_velocity.y *= -1;
         ResetAngle();
         break;
       case collision_type::HORIZONTAL:
+        SnapBall(collision, block);
         m_velocity.x *= -1;
         ResetAngle();
         break;
@@ -155,8 +186,6 @@ public:
     m_position.x += m_velocity.x;
     m_position.y += m_velocity.y;
     EdgeCollision();
-
-    m_shape.setPosition(m_position);
   }
 
   /**
@@ -216,6 +245,7 @@ public:
    * @param window window to draw on
    */
   void Draw(sf::RenderWindow &window) {
+    m_shape.setPosition(m_position);
     window.draw(m_shape);
   }
 
